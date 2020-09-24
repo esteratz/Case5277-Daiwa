@@ -33,7 +33,7 @@ public class Feeder {
             TickData tickData = new TickData();
             tickData.setId(""+k);
             tickData.setSymbol(""+k);
-            mdGigaSpace.write(tickData, WriteModifiers.ONE_WAY.add(WriteModifiers.UPDATE_OR_WRITE);
+            mdGigaSpace.write(tickData, WriteModifiers.ONE_WAY.add(WriteModifiers.UPDATE_OR_WRITE));
         }
     }
 
