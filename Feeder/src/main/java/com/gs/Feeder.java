@@ -5,17 +5,19 @@ import com.gs.model.TickData;
 import org.openspaces.core.GigaSpace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
+@Component
 public class Feeder {
     //ToDo connect to publisher space write 10k TickData
     //ToDo update TickData at increasing rate
     final static int nobjects = 10000;
 
     // gigaSpace.writeMultiple(data, WriteModifiers.ONE_WAY.add(WriteModifiers.UPDATE_OR_WRITE));
-    @Autowired
-    @Qualifier("mdGigaSpace")
+    @Resource
     protected GigaSpace mdGigaSpace;
 
     @PostConstruct
@@ -44,7 +46,7 @@ public class Feeder {
         while (true){
             writeTicks();
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             }
             catch (Exception e) {}
         }

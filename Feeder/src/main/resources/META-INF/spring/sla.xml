@@ -10,7 +10,7 @@
     <os-sla:sla number-of-instances="1">
 
         <os-sla:requirements>
-            <os-sla:zone name="listener" />
+            <os-sla:zone name="Feeder" />
         </os-sla:requirements>
     </os-sla:sla>
 </beans>
