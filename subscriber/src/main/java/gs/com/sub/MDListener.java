@@ -44,6 +44,7 @@ public   class MDListener  implements SpaceDataEventListener<TickData>, ClusterI
     private Integer instanceId = 1;
 
     private boolean subscribedAllForInstance = false;
+    final static long SLEEP_TIME =15;
 
 
     private Map<String, TickData> snapshots = new ConcurrentHashMap<String, TickData>();
@@ -221,10 +222,10 @@ public   class MDListener  implements SpaceDataEventListener<TickData>, ClusterI
     }
 
 
-
+///Decide how long to sleep
     public void onEvent(TickData tickData, GigaSpace space, TransactionStatus tranStatus, Object obj) {
         try{
-            Thread.sleep(15);
+            Thread.sleep(SLEEP_TIME);
         }
         catch (Exception e){
 
