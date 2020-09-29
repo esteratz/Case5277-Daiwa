@@ -53,7 +53,7 @@ public class Feeder {
             try {
                 counter++;
                 log.info("update count :"+counter);
-                Thread.sleep(20);
+                Thread.sleep(130);
             }
             catch (Exception e) {}
         }

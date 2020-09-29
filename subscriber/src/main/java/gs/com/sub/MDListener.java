@@ -52,7 +52,7 @@ public class MDListener  implements SpaceDataEventListener<TickData>, ClusterInf
 
     private boolean subscribedAllForInstance = false;
     final static long SLEEP_TIME =15;
-
+    final static long SLEEP_TIME_IN_MICRO_SEC =150;
 
     private Map<String, TickData> snapshots = new ConcurrentHashMap<String, TickData>();
 
@@ -84,10 +84,17 @@ public class MDListener  implements SpaceDataEventListener<TickData>, ClusterInf
                 .eventListenerAnnotation(new Object() {
                     @SpaceDataEvent
                     public void eventHappened() {
-                        log.info("notifyEventListenerContainer1 subscriber event1 called========== ");
+                        log.info("notifyEventListenerContainer1 subscriber event called========== ");
                         try {
-                            Thread.sleep(SLEEP_TIME);
-                        } catch (InterruptedException e) {
+                            //Thread.sleep(SLEEP_TIME);
+                            long timeInMicrosec = SLEEP_TIME_IN_MICRO_SEC;
+                            final long INTERVAL = timeInMicrosec * 1000;
+                            long start = System.nanoTime();
+                            long end=0;
+                            do{
+                                end = System.nanoTime();
+                            }while(start + INTERVAL >= end);
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
