@@ -7,7 +7,11 @@ import net.jini.lease.LeaseRenewalEvent;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.cluster.ClusterInfo;
 import org.openspaces.core.cluster.ClusterInfoAware;
+import org.openspaces.events.EventDriven;
+import org.openspaces.events.EventTemplate;
 import org.openspaces.events.SpaceDataEventListener;
+import org.openspaces.events.adapter.SpaceDataEvent;
+import org.openspaces.events.notify.Notify;
 import org.openspaces.events.notify.SimpleNotifyContainerConfigurer;
 import org.openspaces.events.notify.SimpleNotifyEventListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +28,21 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-public   class MDListener  implements SpaceDataEventListener<TickData>, ClusterInfoAware {
+@EventDriven
+@Notify
+public class MDListener  implements SpaceDataEventListener<TickData>, ClusterInfoAware {
 
     protected Logger log = Logger.getLogger(this.getClass().getName());
 
     @Autowired
     @Qualifier("mdGigaSpace")
     protected GigaSpace mdGigaSpace;
+    SimpleNotifyEventListenerContainer notifyEventListenerContainer1;
     private int cores;
     //private Source source;
 
-    private int leaseRenewalEventRetryCount;
-    private int leaseRenewalEventRetryIntervalMs;
+    private int leaseRenewalEventRetryCount = 5;
+    private int leaseRenewalEventRetryIntervalMs=5;
 
     private boolean enableLocalCache = true;
 
@@ -71,6 +78,21 @@ public   class MDListener  implements SpaceDataEventListener<TickData>, ClusterI
 
     @PostConstruct
     public void postConstuct(){
+        log.info("MDListener -> postConstuct==================== ");
+        notifyEventListenerContainer1 = new SimpleNotifyContainerConfigurer(mdGigaSpace)
+                .template(new TickData())
+                .eventListenerAnnotation(new Object() {
+                    @SpaceDataEvent
+                    public void eventHappened() {
+                        log.info("notifyEventListenerContainer1 subscriber event1 called========== ");
+                        try {
+                            Thread.sleep(SLEEP_TIME);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).notifyAll(true).fifo(true).notifyContainer();
+        notifyEventListenerContainer1.start();
       /*  processors = new MDClientProcessor[cores];
         for (int index = 0; index < cores; index++) {
             processors[index] = new MDClientProcessor();
@@ -79,6 +101,7 @@ public   class MDListener  implements SpaceDataEventListener<TickData>, ClusterI
 
     @PreDestroy
     public void preDestroy() {
+        log.info("predestroy called===============");
         /*clear();
         if (processors != null) {
             for (int index = 0; index < cores; index++) {
@@ -108,13 +131,13 @@ public   class MDListener  implements SpaceDataEventListener<TickData>, ClusterI
         return source;
     }*/
 
-    @Required //md.leaseRenewalEventRetryCount
+     //md.leaseRenewalEventRetryCount
     public void setLeaseRenewalEventRetryCount(int leaseRenewalEventRetryCount) {
         log.info("MDListener.LeaseRenewalEventRetry({})" +  leaseRenewalEventRetryCount);
         this.leaseRenewalEventRetryCount = leaseRenewalEventRetryCount ;
     }
 
-    @Required //md.leaseRenewalEventRetryIntervalMs
+    //md.leaseRenewalEventRetryIntervalMs
     public void setLeaseRenewalEventRetryIntervalMs(int leaseRenewalEventRetryIntervalMs) {
         log.info("MDListener.LeaseRenewalEventRetryIntervalMs({})"+ leaseRenewalEventRetryIntervalMs);
         this.leaseRenewalEventRetryIntervalMs = leaseRenewalEventRetryIntervalMs ;
@@ -221,10 +244,11 @@ public   class MDListener  implements SpaceDataEventListener<TickData>, ClusterI
 
     }
 
-
 ///Decide how long to sleep
+    //@SpaceDataEvent
     public void onEvent(TickData tickData, GigaSpace space, TransactionStatus tranStatus, Object obj) {
         try{
+            log.info("1111111subscriber (listener) onevent called========== tranStatus:"+tranStatus+" ,tickData="+tickData);
             Thread.sleep(SLEEP_TIME);
         }
         catch (Exception e){

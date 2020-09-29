@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.logging.Logger;
 
 @Component
 public class Feeder {
@@ -16,12 +17,15 @@ public class Feeder {
     //ToDo update TickData at increasing rate
     final static int nobjects = 10000;
 
+    private Logger log = Logger.getLogger(this.getClass().getName());
+
     // gigaSpace.writeMultiple(data, WriteModifiers.ONE_WAY.add(WriteModifiers.UPDATE_OR_WRITE));
     @Resource
     protected GigaSpace mdGigaSpace;
 
     @PostConstruct
     public void run(){
+        log.info("========PostConstruct run ==========================");
         writeTicks();
         updateTicks();
     }
@@ -43,10 +47,13 @@ public class Feeder {
     update at increasing rates - add more feeders use onw way for speed
      */
     public void updateTicks(){
+        long counter =0l;
         while (true){
             writeTicks();
             try {
-                Thread.sleep(1000);
+                counter++;
+                log.info("update count :"+counter);
+                Thread.sleep(20);
             }
             catch (Exception e) {}
         }

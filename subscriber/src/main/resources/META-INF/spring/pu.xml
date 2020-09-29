@@ -8,10 +8,10 @@
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
-       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/11.0/core/openspaces-core.xsd
-       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/11.0/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/12.0/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/12.0/events/openspaces-events.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
-       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/11.0/remoting/openspaces-remoting.xsd">
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/12.0/remoting/openspaces-remoting.xsd">
 
 
     <!-- Enables the usage of @GigaSpaceContext annotation based injection. -->
@@ -29,9 +29,11 @@
     <tx:annotation-driven transaction-manager="transactionManager" />
     <!-- SPACE CONFIGURATION -->
     <!-- A bean representing a space (an IJSpace implementation). -->
-    <os-core:embedded-space id="space" space-name="coreSpace"/>
+    <!--<os-core:embedded-space id="space" space-name="coreSpace"/>-->
     <!-- OpenSpaces simplified space API built on top of IJSpace/JavaSpace. -->
+<!--
     <os-core:giga-space id="gigaSpace" space="space" tx-manager="transactionManager"/>
+-->
 
     <!-- Defines a local Jini transaction manager. -->
     <os-core:distributed-tx-manager id="transactionManager" />
@@ -40,5 +42,25 @@
 
      <os-core:giga-space id="mdGigaSpace" space="mdSpace"
                         tx-manager="transactionManager"/>
+
+    <!--  <bean id="simpleListener" class="gs.com.sub.MDListener" />
+
+      <os-events:notify-container id="eventContainer" giga-space="gigaSpace">
+
+         &lt;!&ndash; <os-core:template>
+              <bean class="com.gs.model.TickData">
+              </bean>
+          </os-core:template>&ndash;&gt;
+
+          <os-events:listener>
+              <os-events:annotation-adapter>
+                  <os-events:delegate ref="simpleListener"/>
+              </os-events:annotation-adapter>
+          </os-events:listener>
+      </os-events:notify-container>-->
+    <context:component-scan base-package="gs.com.sub"/>
+
+    <os-events:annotation-support />
+
 
 </beans>
